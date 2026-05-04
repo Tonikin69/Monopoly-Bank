@@ -418,21 +418,10 @@ input:focus:not(:focus-visible) {
 }
 
 .dice-container {
-    background: linear-gradient(145deg, #e8d5a8, #d4b87a);
+    background: linear-gradient(145deg, #fff8e7, #f5deb3);
     border-radius: 20px;
     padding: 30px 20px;
     margin-bottom: 20px;
-    position: relative;
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
-}
-
-.dice-container::after {
-    content: '';
-    position: absolute;
-    inset: 8px;
-    border: 2px dashed rgba(139, 90, 43, 0.25);
-    border-radius: 16px;
-    pointer-events: none;
 }
 
 .dice-container h2 {
@@ -447,27 +436,13 @@ input:focus:not(:focus-visible) {
     justify-content: center;
     gap: 25px;
     margin-bottom: 20px;
-    padding: 25px;
-    background: #2d5a27;
-    border-radius: 16px;
-    box-shadow: inset 0 3px 10px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.1);
-    position: relative;
-}
-
-.dice-wrapper::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(255,255,255,0.02) 3px, rgba(255,255,255,0.02) 6px);
-    border-radius: 16px;
-    pointer-events: none;
 }
 
 .dice {
     width: 90px;
     height: 90px;
     background: linear-gradient(145deg, #ffffff, #f0f0f0);
-    border: 4px solid #5a3a1a;
+    border: 4px solid #8b5a2b;
     border-radius: 15px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -475,9 +450,8 @@ input:focus:not(:focus-visible) {
     padding: 12px;
     gap: 3px;
     box-shadow:
-        4px 4px 0 rgba(90, 58, 26, 0.3),
-        6px 6px 12px rgba(0,0,0,0.25),
-        inset 0 1px 3px rgba(255,255,255,0.8);
+        4px 4px 10px rgba(0,0,0,0.2),
+        inset 0 0 10px rgba(0,0,0,0.05);
     transition: transform 0.1s;
     position: relative;
 }
