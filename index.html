@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Monopoly Bank</title>
+<title>Monopoly Bank - Banco del Juego</title>
+<meta name="description" content="Banco virtual de Monopoly: gestiona el dinero de los jugadores, lanza dados y lleva un registro de transacciones. Herramienta de uso personal.">
+<meta property="og:title" content="Monopoly Bank">
+<meta property="og:description" content="Banco virtual de Monopoly con dados, gestión de dinero y registro de transacciones.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#8b5a2b">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Lobster+Two:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@400;700&display=swap');
 
@@ -24,6 +29,38 @@ body {
     overflow-x: hidden;
 }
 
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+:focus-visible {
+    outline: 3px solid #d4a84b;
+    outline-offset: 2px;
+}
+
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible) {
+    outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
 .vintage-border {
     border: 4px solid #8b5a2b;
     box-shadow:
@@ -31,6 +68,7 @@ body {
         inset 0 0 0 6px #8b5a2b,
         0 8px 25px rgba(0,0,0,0.3);
     position: relative;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
 }
 
 .vintage-border::before {
@@ -273,6 +311,18 @@ body {
     position: relative;
     overflow: hidden;
     transition: all 0.3s;
+    box-shadow: 2px 3px 8px rgba(0,0,0,0.1);
+}
+
+.player-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle at bottom right, rgba(212, 168, 75, 0.15), transparent 70%);
+    pointer-events: none;
 }
 
 .player-card::before {
@@ -341,6 +391,11 @@ body {
     gap: 5px;
 }
 
+.btn-give, .btn-take {
+    min-width: 44px;
+    min-height: 44px;
+}
+
 .btn-give {
     background: linear-gradient(145deg, #2ecc71, #27ae60);
     color: white;
@@ -363,10 +418,21 @@ body {
 }
 
 .dice-container {
-    background: linear-gradient(145deg, #fff8e7, #f5deb3);
+    background: linear-gradient(145deg, #e8d5a8, #d4b87a);
     border-radius: 20px;
     padding: 30px 20px;
     margin-bottom: 20px;
+    position: relative;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.dice-container::after {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 2px dashed rgba(139, 90, 43, 0.25);
+    border-radius: 16px;
+    pointer-events: none;
 }
 
 .dice-container h2 {
@@ -381,13 +447,27 @@ body {
     justify-content: center;
     gap: 25px;
     margin-bottom: 20px;
+    padding: 25px;
+    background: #2d5a27;
+    border-radius: 16px;
+    box-shadow: inset 0 3px 10px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.dice-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(255,255,255,0.02) 3px, rgba(255,255,255,0.02) 6px);
+    border-radius: 16px;
+    pointer-events: none;
 }
 
 .dice {
     width: 90px;
     height: 90px;
     background: linear-gradient(145deg, #ffffff, #f0f0f0);
-    border: 4px solid #8b5a2b;
+    border: 4px solid #5a3a1a;
     border-radius: 15px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -395,8 +475,9 @@ body {
     padding: 12px;
     gap: 3px;
     box-shadow:
-        4px 4px 10px rgba(0,0,0,0.2),
-        inset 0 0 10px rgba(0,0,0,0.05);
+        4px 4px 0 rgba(90, 58, 26, 0.3),
+        6px 6px 12px rgba(0,0,0,0.25),
+        inset 0 1px 3px rgba(255,255,255,0.8);
     transition: transform 0.1s;
     position: relative;
 }
@@ -438,16 +519,20 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
-    box-shadow: 0 5px 15px rgba(196, 30, 58, 0.4);
+    box-shadow: 0 5px 0 #6b0d1a, 0 8px 20px rgba(196, 30, 58, 0.4);
+    position: relative;
+    min-width: 44px;
+    min-height: 44px;
 }
 
 .roll-btn:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 25px rgba(196, 30, 58, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 #6b0d1a, 0 12px 28px rgba(196, 30, 58, 0.5);
 }
 
 .roll-btn:active {
-    transform: translateY(0) scale(0.98);
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #6b0d1a, 0 4px 10px rgba(196, 30, 58, 0.3);
 }
 
 .roll-btn:disabled {
@@ -535,6 +620,9 @@ body {
     border-radius: 12px;
     padding: 10px;
     min-height: 200px;
+    background-image: 
+        repeating-linear-gradient(transparent, transparent 27px, #e8dcc8 27px, #e8dcc8 28px);
+    background-position: 0 14px;
 }
 
 .log-container::-webkit-scrollbar {
@@ -663,9 +751,11 @@ body {
 </head>
 <body>
 
+<div id="sr-announcements" class="visually-hidden" role="status" aria-live="assertive" aria-atomic="true"></div>
+
 <!-- SETUP SCREEN -->
 <div id="setup-screen">
-    <div class="setup-container vintage-border">
+    <div class="setup-container vintage-border" role="main">
         <span class="corner-decor top-left">&#10050;</span>
         <span class="corner-decor top-right">&#10050;</span>
         <span class="corner-decor bottom-left">&#10050;</span>
@@ -678,7 +768,7 @@ body {
         <div class="decoration">&#9734; &#10050; &#9734;</div>
 
         <div class="form-group">
-            <label>&#128178; Dinero Inicial por Jugador</label>
+            <label for="initial-money">&#128178; Dinero Inicial por Jugador</label>
             <input type="number" id="initial-money" value="1500" min="0" step="50">
         </div>
 
@@ -687,14 +777,14 @@ body {
             <div class="players-input" id="players-input">
                 <div class="player-input-row">
                     <span class="player-number">1</span>
-                    <input type="text" placeholder="Nombre del jugador" class="player-name-input">
+                    <input type="text" placeholder="Nombre del jugador" class="player-name-input" aria-label="Nombre del jugador 1">
                 </div>
                 <div class="player-input-row">
                     <span class="player-number">2</span>
-                    <input type="text" placeholder="Nombre del jugador" class="player-name-input">
+                    <input type="text" placeholder="Nombre del jugador" class="player-name-input" aria-label="Nombre del jugador 2">
                 </div>
             </div>
-            <button class="btn btn-add-player" onclick="addPlayerInput()">+ A&ntilde;adir Jugador</button>
+            <button class="btn btn-add-player" onclick="addPlayerInput()" aria-label="Añadir otro jugador">+ A&ntilde;adir Jugador</button>
         </div>
 
         <div class="decoration">&#9734; &#10050; &#9734;</div>
@@ -706,60 +796,60 @@ body {
 </div>
 
 <!-- GAME SCREEN -->
-<div id="game-screen">
-    <div class="game-header">
+<div id="game-screen" role="main">
+    <header class="game-header">
         <div class="ornament">&#9733; &#10050; &#9733; &#10050; &#9733;</div>
         <h1>&#127968; Monopoly Bank &#127968;</h1>
         <div class="ornament">&#9733; &#10050; &#9733; &#10050; &#9733;</div>
-    </div>
+    </header>
 
     <div class="main-layout">
         <!-- PLAYERS PANEL -->
-        <div class="players-panel vintage-border">
+        <div class="players-panel vintage-border" role="region" aria-label="Jugadores">
             <h2>&#128101; Jugadores</h2>
             <div id="players-container"></div>
         </div>
 
         <!-- DICE CENTER -->
-        <div class="dice-center">
+        <div class="dice-center" role="region" aria-label="Dados y acciones">
             <div class="dice-container vintage-border">
                 <h2>&#127922; Dados</h2>
                 <div class="dice-wrapper">
-                    <div class="dice" id="dice1">
+                    <div class="dice" id="dice1" role="img" aria-label="Dado 1">
                         <div class="dot"></div><div class="dot"></div><div class="dot"></div>
                         <div class="dot"></div><div class="dot"></div><div class="dot"></div>
                         <div class="dot"></div><div class="dot"></div><div class="dot"></div>
                     </div>
-                    <div class="dice" id="dice2">
+                    <div class="dice" id="dice2" role="img" aria-label="Dado 2">
                         <div class="dot"></div><div class="dot"></div><div class="dot"></div>
                         <div class="dot"></div><div class="dot"></div><div class="dot"></div>
                         <div class="dot"></div><div class="dot"></div><div class="dot"></div>
                     </div>
                 </div>
-                <button class="roll-btn" id="roll-btn" onclick="rollDice()">&#127922; &iexcl;Lanzar Dados!</button>
-                <div class="dice-result" id="dice-result"></div>
+                <button class="roll-btn" id="roll-btn" onclick="rollDice()" aria-label="Lanzar dados">&#127922; &iexcl;Lanzar Dados!</button>
+                <div class="dice-result" id="dice-result" role="status" aria-live="polite"></div>
             </div>
 
             <div class="quick-actions vintage-border">
                 <h3>&#9889; Acciones R&aacute;pidas</h3>
                 <div class="quick-amounts">
-                    <button class="quick-amount-btn" onclick="quickAction('salary')">&#128176; Salario (+200)</button>
-                    <button class="quick-amount-btn" onclick="quickAction('luxury')">&#128142; Lujo (-100)</button>
-                    <button class="quick-amount-btn" onclick="quickAction('tax')">&#128179; Impuestos (-150)</button>
-                    <button class="quick-amount-btn" onclick="quickAction('chance')">&#127752; Suerte</button>
+                    <button class="quick-amount-btn" onclick="quickAction('salary')" aria-label="Dar salario de 200">&#128176; Salario (+200)</button>
+                    <button class="quick-amount-btn" onclick="quickAction('luxury')" aria-label="Cobrar impuesto de lujo de 100">&#128142; Lujo (-100)</button>
+                    <button class="quick-amount-btn" onclick="quickAction('tax')" aria-label="Cobrar impuestos de 150">&#128179; Impuestos (-150)</button>
+                    <button class="quick-amount-btn" onclick="quickAction('chance')" aria-label="Tarjeta de suerte">&#127752; Suerte</button>
                 </div>
             </div>
         </div>
 
         <!-- LOG PANEL -->
-        <div class="log-panel vintage-border">
+        <div class="log-panel vintage-border" role="region" aria-label="Registro de transacciones">
             <h2>&#128203; Registro</h2>
-            <div class="log-container" id="log-container">
+            <div class="log-container" id="log-container" role="log" aria-live="polite" aria-label="Registro de transacciones">
                 <div style="text-align: center; color: #999; padding: 30px; font-family: 'Playfair Display', serif;">
                     El registro aparecer&aacute; aqu&iacute;...
                 </div>
             </div>
-            <button class="btn btn-secondary btn-small clear-log-btn" onclick="clearLog()">&#128465; Limpiar Registro</button>
+            <button class="btn btn-secondary btn-small clear-log-btn" onclick="clearLog()" aria-label="Limpiar el registro de transacciones">&#128465; Limpiar Registro</button>
         </div>
     </div>
 </div>
@@ -768,6 +858,12 @@ body {
 let players = [];
 let logs = [];
 let playerCount = 2;
+
+function announce(message) {
+    const el = document.getElementById('sr-announcements');
+    el.textContent = '';
+    setTimeout(() => { el.textContent = message; }, 50);
+}
 
 const dicePatterns = {
     1: [0,0,0,0,1,0,0,0,0],
@@ -785,7 +881,7 @@ function addPlayerInput() {
     row.className = 'player-input-row';
     row.innerHTML = `
         <span class="player-number">${playerCount}</span>
-        <input type="text" placeholder="Nombre del jugador" class="player-name-input">
+        <input type="text" placeholder="Nombre del jugador" class="player-name-input" aria-label="Nombre del jugador ${playerCount}">
     `;
     container.appendChild(row);
 }
@@ -830,10 +926,10 @@ function renderPlayers() {
                 $${player.money.toLocaleString()}
             </div>
             <div class="money-change">
-                <input type="number" id="amount-${player.id}" placeholder="$" min="0">
+                <input type="number" id="amount-${player.id}" placeholder="$" min="0" aria-label="Cantidad para ${player.name}">
                 <div class="money-buttons">
-                    <button class="btn btn-small btn-give" onclick="modifyMoney(${player.id}, 'add')">+</button>
-                    <button class="btn btn-small btn-take" onclick="modifyMoney(${player.id}, 'subtract')">-</button>
+                    <button class="btn btn-small btn-give" onclick="modifyMoney(${player.id}, 'add')" aria-label="Dar dinero a ${player.name}">+</button>
+                    <button class="btn btn-small btn-take" onclick="modifyMoney(${player.id}, 'subtract')" aria-label="Quitar dinero a ${player.name}">-</button>
                 </div>
             </div>
         `;
@@ -858,10 +954,12 @@ function modifyMoney(playerId, type) {
         player.money += amount;
         addLog(player.name, `+$${amount.toLocaleString()}`, 'positive');
         showMoneyAnimation(playerId, `+$${amount.toLocaleString()}`, 'positive');
+        announce(`${player.name} recibe $${amount.toLocaleString()}. Total: $${player.money.toLocaleString()}`);
     } else {
         player.money -= amount;
         addLog(player.name, `-$${amount.toLocaleString()}`, 'negative');
         showMoneyAnimation(playerId, `-$${amount.toLocaleString()}`, 'negative');
+        announce(`Se cobra $${amount.toLocaleString()} a ${player.name}. Total: $${player.money.toLocaleString()}`);
     }
 
     updateMoneyDisplay(playerId);
@@ -927,6 +1025,7 @@ function rollDice() {
         }
 
         addLog('Dados', `${result1} + ${result2} = ${total}`, 'dice-log');
+        announce(`Dados: ${result1} y ${result2}. Total ${total}.${isDoubles ? ' Dobles!' : ''}`);
         btn.disabled = false;
     }, 650);
 }
