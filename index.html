@@ -230,11 +230,6 @@ input:focus:not(:focus-visible) {
     color: #f5deb3;
 }
 
-.btn-small {
-    padding: 8px 15px;
-    font-size: 1rem;
-}
-
 .btn-add-player {
     background: transparent;
     border: 2px dashed #8b5a2b;
@@ -364,53 +359,53 @@ input:focus:not(:focus-visible) {
     color: #c41e3a;
 }
 
-.money-change {
+.player-actions {
     display: flex;
-    gap: 8px;
+    justify-content: space-between;
     margin-top: 10px;
-    align-items: center;
-}
-
-.money-change input {
-    width: 90px;
-    padding: 6px 10px;
-    font-family: 'Lobster Two', cursive;
-    font-size: 1rem;
-    border: 2px solid #8b5a2b;
-    border-radius: 8px;
-    background: #fffdf5;
-    color: #5a3a1a;
-    outline: none;
-}
-
-.money-change input:focus {
-    border-color: #d4a84b;
-}
-
-.money-buttons {
-    display: flex;
     gap: 5px;
 }
 
-.btn-give, .btn-take {
-    min-width: 44px;
-    min-height: 44px;
+.action-col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-.btn-give {
+.action-col.left {
+    align-items: flex-start;
+}
+
+.action-col.right {
+    align-items: flex-end;
+}
+
+.amount-btn {
+    font-family: 'Lobster Two', cursive;
+    font-size: 0.85rem;
+    padding: 4px 8px;
+    border: 2px solid #8b5a2b;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 80px;
+    text-align: center;
+}
+
+.btn-add {
     background: linear-gradient(145deg, #2ecc71, #27ae60);
     color: white;
-    border: 2px solid #1e8b4a;
+    border-color: #1e8b4a;
 }
 
-.btn-take {
+.btn-sub {
     background: linear-gradient(145deg, #e74c3c, #c0392b);
     color: white;
-    border: 2px solid #a93226;
+    border-color: #a93226;
 }
 
-.btn-give:hover, .btn-take:hover {
-    transform: scale(1.1);
+.amount-btn:hover {
+    transform: scale(1.05);
 }
 
 /* DICE CENTER */
@@ -526,45 +521,6 @@ input:focus:not(:focus-visible) {
     font-weight: bold;
     color: #c41e3a;
     text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
-}
-
-/* QUICK ACTIONS */
-.quick-actions {
-    background: linear-gradient(145deg, #fff8e7, #f5deb3);
-    border-radius: 20px;
-    padding: 20px;
-    margin-top: 20px;
-}
-
-.quick-actions h3 {
-    color: #8b5a2b;
-    font-size: 1.3rem;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-.quick-amounts {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-}
-
-.quick-amount-btn {
-    font-family: 'Lobster Two', cursive;
-    padding: 10px;
-    font-size: 1.1rem;
-    border: 2px solid #8b5a2b;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s;
-    background: #fffdf5;
-    color: #5a3a1a;
-}
-
-.quick-amount-btn:hover {
-    background: #d4a84b;
-    color: white;
-    transform: scale(1.05);
 }
 
 /* LOG PANEL */
@@ -742,7 +698,7 @@ input:focus:not(:focus-visible) {
 
         <div class="form-group">
             <label for="initial-money">&#128178; Dinero Inicial por Jugador</label>
-            <input type="number" id="initial-money" value="1500" min="0" step="50">
+            <input type="number" id="initial-money" value="15000000" min="0" step="10000">
         </div>
 
         <div class="form-group">
@@ -803,15 +759,7 @@ input:focus:not(:focus-visible) {
                 <div class="dice-result" id="dice-result" role="status" aria-live="polite"></div>
             </div>
 
-            <div class="quick-actions vintage-border">
-                <h3>&#9889; Acciones R&aacute;pidas</h3>
-                <div class="quick-amounts">
-                    <button class="quick-amount-btn" onclick="quickAction('salary')" aria-label="Dar salario de 200">&#128176; Salario (+200)</button>
-                    <button class="quick-amount-btn" onclick="quickAction('luxury')" aria-label="Cobrar impuesto de lujo de 100">&#128142; Lujo (-100)</button>
-                    <button class="quick-amount-btn" onclick="quickAction('tax')" aria-label="Cobrar impuestos de 150">&#128179; Impuestos (-150)</button>
-                    <button class="quick-amount-btn" onclick="quickAction('chance')" aria-label="Tarjeta de suerte">&#127752; Suerte</button>
-                </div>
-            </div>
+
         </div>
 
         <!-- LOG PANEL -->
@@ -898,11 +846,16 @@ function renderPlayers() {
             <div class="player-money ${player.money < 0 ? 'negative' : ''}" id="money-${player.id}">
                 $${player.money.toLocaleString()}
             </div>
-            <div class="money-change">
-                <input type="number" id="amount-${player.id}" placeholder="$" min="0" aria-label="Cantidad para ${player.name}">
-                <div class="money-buttons">
-                    <button class="btn btn-small btn-give" onclick="modifyMoney(${player.id}, 'add')" aria-label="Dar dinero a ${player.name}">+</button>
-                    <button class="btn btn-small btn-take" onclick="modifyMoney(${player.id}, 'subtract')" aria-label="Quitar dinero a ${player.name}">-</button>
+            <div class="player-actions">
+                <div class="action-col left">
+                    <button class="amount-btn btn-add" onclick="modifyMoneyFixed(${player.id}, 1000000)">+1M</button>
+                    <button class="amount-btn btn-add" onclick="modifyMoneyFixed(${player.id}, 100000)">+100k</button>
+                    <button class="amount-btn btn-add" onclick="modifyMoneyFixed(${player.id}, 10000)">+10k</button>
+                </div>
+                <div class="action-col right">
+                    <button class="amount-btn btn-sub" onclick="modifyMoneyFixed(${player.id}, -1000000)">-1M</button>
+                    <button class="amount-btn btn-sub" onclick="modifyMoneyFixed(${player.id}, -100000)">-100k</button>
+                    <button class="amount-btn btn-sub" onclick="modifyMoneyFixed(${player.id}, -10000)">-10k</button>
                 </div>
             </div>
         `;
@@ -910,33 +863,23 @@ function renderPlayers() {
     });
 }
 
-function modifyMoney(playerId, type) {
-    const amountInput = document.getElementById(`amount-${playerId}`);
-    let amount = parseInt(amountInput.value);
-
-    if (!amount || amount <= 0) {
-        amountInput.style.borderColor = '#e74c3c';
-        setTimeout(() => amountInput.style.borderColor = '#8b5a2b', 1000);
-        return;
-    }
-
+function modifyMoneyFixed(playerId, amount) {
     const player = players.find(p => p.id === playerId);
     if (!player) return;
 
-    if (type === 'add') {
-        player.money += amount;
-        addLog(player.name, `+$${amount.toLocaleString()}`, 'positive');
-        showMoneyAnimation(playerId, `+$${amount.toLocaleString()}`, 'positive');
-        announce(`${player.name} recibe $${amount.toLocaleString()}. Total: $${player.money.toLocaleString()}`);
+    player.money += amount;
+    const abs = Math.abs(amount);
+    if (amount > 0) {
+        addLog(player.name, `+$${abs.toLocaleString()}`, 'positive');
+        showMoneyAnimation(playerId, `+$${abs.toLocaleString()}`, 'positive');
+        announce(`${player.name} recibe $${abs.toLocaleString()}. Total: $${player.money.toLocaleString()}`);
     } else {
-        player.money -= amount;
-        addLog(player.name, `-$${amount.toLocaleString()}`, 'negative');
-        showMoneyAnimation(playerId, `-$${amount.toLocaleString()}`, 'negative');
-        announce(`Se cobra $${amount.toLocaleString()} a ${player.name}. Total: $${player.money.toLocaleString()}`);
+        addLog(player.name, `-$${abs.toLocaleString()}`, 'negative');
+        showMoneyAnimation(playerId, `-$${abs.toLocaleString()}`, 'negative');
+        announce(`Se cobra $${abs.toLocaleString()} a ${player.name}. Total: $${player.money.toLocaleString()}`);
     }
 
     updateMoneyDisplay(playerId);
-    amountInput.value = '';
 }
 
 function updateMoneyDisplay(playerId) {
@@ -1062,162 +1005,6 @@ function renderLog() {
 function clearLog() {
     logs = [];
     renderLog();
-}
-
-function quickAction(type) {
-    const modal = document.createElement('div');
-    modal.style.cssText = `
-        position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-        display: flex; align-items: center; justify-content: center;
-        z-index: 999; animation: fadeIn 0.2s ease-out;
-    `;
-
-    let title = '';
-    let amounts = [];
-
-    switch(type) {
-        case 'salary':
-            title = '&#128176; Salario - Dar +$200';
-            amounts = [{ label: 'Todos', action: 'all' }];
-            break;
-        case 'luxury':
-            title = '&#128142; Impuesto de Lujo -$100';
-            amounts = [{ label: 'Todos', action: 'all' }];
-            break;
-        case 'tax':
-            title = '&#128179; Impuestos -$150';
-            amounts = [{ label: 'Todos', action: 'all' }];
-            break;
-        case 'chance':
-            title = '&#127752; Suerte - Selecciona jugador';
-            break;
-    }
-
-    let content = `
-        <div style="background: linear-gradient(145deg, #fff8e7, #f5deb3); border: 4px solid #8b5a2b;
-            border-radius: 20px; padding: 30px; max-width: 400px; width: 90%; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-            <h2 style="color: #8b5a2b; margin-bottom: 20px;">${title}</h2>
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
-    `;
-
-    if (type === 'chance') {
-        const chanceCards = [
-            { label: 'Avanza 3 casillas', amount: 0 },
-            { label: 'Gana $50', amount: 50 },
-            { label: 'Paga $75', amount: -75 },
-            { label: 'Gana $150', amount: 150 },
-            { label: 'Paga $100', amount: -100 },
-            { label: 'Gana $200', amount: 200 },
-        ];
-
-        content += `<select id="chance-player" style="font-family: 'Lobster Two', cursive; font-size: 1.1rem;
-            padding: 8px 15px; border: 3px solid #8b5a2b; border-radius: 10px; background: #fffdf5;
-            color: #5a3a1a; width: 100%; margin-bottom: 15px;">`;
-        players.forEach(p => {
-            content += `<option value="${p.id}">${p.name}</option>`;
-        });
-        content += `</select>`;
-
-        content += `<select id="chance-card" style="font-family: 'Lobster Two', cursive; font-size: 1.1rem;
-            padding: 8px 15px; border: 3px solid #8b5a2b; border-radius: 10px; background: #fffdf5;
-            color: #5a3a1a; width: 100%; margin-bottom: 15px;">`;
-        chanceCards.forEach((card, i) => {
-            content += `<option value="${i}">${card.label}</option>`;
-        });
-        content += `</select>`;
-
-        content += `<button class="btn btn-primary" onclick="applyChance()" style="width: 100%;">Aplicar</button>`;
-    } else {
-        let amount = 0, action = '';
-        if (type === 'salary') { amount = 200; action = 'add'; }
-        else if (type === 'luxury') { amount = 100; action = 'subtract'; }
-        else if (type === 'tax') { amount = 150; action = 'subtract'; }
-
-        players.forEach(p => {
-            content += `<button class="btn btn-small ${action === 'add' ? 'btn-give' : 'btn-take'}"
-                onclick="quickApply(${p.id}, ${action === 'add' ? '' : '-'}${amount}, '${type}')">${p.name}</button>`;
-        });
-        content += `<button class="btn btn-small btn-primary" onclick="quickApplyAll(${action === 'add' ? '' : '-'}${amount}, '${type}')" style="width: 100%; margin-top: 10px;">Todos</button>`;
-    }
-
-    content += `
-            </div>
-            <button class="btn btn-secondary btn-small" onclick="this.closest('div').parentElement.remove()" style="margin-top: 20px;">Cancelar</button>
-        </div>
-    `;
-
-    modal.innerHTML = content;
-    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-    document.body.appendChild(modal);
-}
-
-function quickApply(playerId, amount, type) {
-    const player = players.find(p => p.id === playerId);
-    if (!player) return;
-
-    player.money += amount;
-    const action = amount > 0 ? `+$${amount}` : `-$${Math.abs(amount)}`;
-    const logType = amount > 0 ? 'positive' : 'negative';
-
-    let actionName = '';
-    if (type === 'salary') actionName = 'Salario';
-    else if (type === 'luxury') actionName = 'Impuesto de lujo';
-    else if (type === 'tax') actionName = 'Impuestos';
-
-    addLog(player.name, `${action} (${actionName})`, logType);
-    updateMoneyDisplay(playerId);
-
-    document.querySelectorAll('div[style*="position: fixed"]').forEach(m => m.remove());
-}
-
-function quickApplyAll(amount, type) {
-    players.forEach(p => {
-        p.money += amount;
-        updateMoneyDisplay(p.id);
-    });
-
-    const action = amount > 0 ? `+$${amount}` : `-$${Math.abs(amount)}`;
-    const logType = amount > 0 ? 'positive' : 'negative';
-
-    let actionName = '';
-    if (type === 'salary') actionName = 'Salario para todos';
-    else if (type === 'luxury') actionName = 'Impuesto de lujo para todos';
-    else if (type === 'tax') actionName = 'Impuestos para todos';
-
-    addLog('Todos', `${action} (${actionName})`, logType);
-    document.querySelectorAll('div[style*="position: fixed"]').forEach(m => m.remove());
-}
-
-function applyChance() {
-    const playerSelect = document.getElementById('chance-player');
-    const cardSelect = document.getElementById('chance-card');
-    const playerId = parseInt(playerSelect.value);
-    const cardIndex = parseInt(cardSelect.value);
-
-    const chanceCards = [
-        { label: 'Avanza 3 casillas', amount: 0 },
-        { label: 'Gana $50', amount: 50 },
-        { label: 'Paga $75', amount: -75 },
-        { label: 'Gana $150', amount: 150 },
-        { label: 'Paga $100', amount: -100 },
-        { label: 'Gana $200', amount: 200 },
-    ];
-
-    const card = chanceCards[cardIndex];
-    const player = players.find(p => p.id === playerId);
-
-    if (player && card.amount !== 0) {
-        player.money += card.amount;
-        const action = card.amount > 0 ? `+$${card.amount}` : `-$${Math.abs(card.amount)}`;
-        const logType = card.amount > 0 ? 'positive' : 'negative';
-        addLog(player.name, `${action} (Suerte: ${card.label})`, logType);
-        updateMoneyDisplay(playerId);
-    } else if (player) {
-        addLog(player.name, `Suerte: ${card.label}`, 'dice-log');
-    }
-
-    document.querySelectorAll('div[style*="position: fixed"]').forEach(m => m.remove());
 }
 
 // Add pulse animation
