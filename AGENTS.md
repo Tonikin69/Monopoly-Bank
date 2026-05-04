@@ -2,7 +2,7 @@
 
 ## Project
 
-Single-file static HTML app: `monopoly-bank.html`. No build system, no dependencies, no server required. Runs in any browser via `file://` or localhost.
+Single-file static HTML app: `index.html` (deployed as `monopoly-bank.html` locally). No build system, no dependencies, no server required. Runs in any browser via `file://` or localhost.
 
 ## Commands
 
