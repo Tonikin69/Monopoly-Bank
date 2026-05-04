@@ -462,12 +462,10 @@ input:focus:not(:focus-visible) {
 }
 
 @keyframes diceRoll {
-    0% { transform: rotate(0deg) scale(1); }
-    20% { transform: rotate(72deg) scale(1.2); }
-    40% { transform: rotate(144deg) scale(0.9); }
-    60% { transform: rotate(216deg) scale(1.15); }
-    80% { transform: rotate(288deg) scale(0.95); }
-    100% { transform: rotate(360deg) scale(1); }
+    0%, 100% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-20px) scale(1.15); }
+    60% { transform: translateY(0) scale(0.9); }
+    100% { transform: translateY(0) scale(1); }
 }
 
 .dice .dot {
@@ -980,10 +978,18 @@ function rollDice() {
     const result1 = Math.floor(Math.random() * 6) + 1;
     const result2 = Math.floor(Math.random() * 6) + 1;
     const total = result1 + result2;
-
     const isDoubles = result1 === result2;
 
+    let rolls = 0;
+    const interval = setInterval(() => {
+        setDiceFace(dice1, Math.floor(Math.random() * 6) + 1);
+        setDiceFace(dice2, Math.floor(Math.random() * 6) + 1);
+        rolls++;
+        if (rolls > 8) clearInterval(interval);
+    }, 80);
+
     setTimeout(() => {
+        clearInterval(interval);
         setDiceFace(dice1, result1);
         setDiceFace(dice2, result2);
 
